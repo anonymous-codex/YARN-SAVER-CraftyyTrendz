@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yarn-Saver | Digital Stitch Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --sage: #8A9A5B; 
+            --cream: #FDFBF7; 
+            --dark-sage: #5C6345; 
+            --accent: #E9EED9; 
+            --dot-color: rgba(138, 154, 91, 0.12); 
+        }
+        
+        /* DOTS BACKGROUND ON FULL PAGE */
+        html, body { 
+            background-color: var(--cream); 
+            background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            font-family: 'Quicksand', sans-serif; 
+            color: var(--dark-sage); 
+            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+        }
+        
+        h1 { font-family: 'Playfair Display', serif; }
+
+        .blob-container { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+        .blob { position: absolute; width: 450px; height: 450px; background: var(--accent); filter: blur(120px); border-radius: 50%; animation: float 20s infinite alternate; }
+        @keyframes float { 0% { transform: translate(-10%, -10%); } 100% { transform: translate(15%, 15%); } }
+
+        #app-viewport { height: 100vh; overflow-y: auto; display: flex; justify-content: center; padding: 20px; position: relative; }
+
+        #landingPage { transition: all 0.8s ease; z-index: 100; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; max-width: 28rem; }
+        .is-hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.92); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.7); 
+            box-shadow: 0 30px 60px -12px rgba(138, 154, 91, 0.15); 
+        }
+
+        .input-field { width: 100%; padding: 1rem; border-radius: 1rem; border: 1px solid #EEEEEE; background: white; outline: none; transition: 0.3s; }
+        .input-field:focus { border-color: var(--sage); box-shadow: 0 0 0 4px rgba(138, 154, 91, 0.05); }
+
+        /* Chrome, Safari, Edge, Opera - Remove arrows */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        /* Firefox - Remove arrows */
+        input[type=number] { -moz-appearance: textfield; }
+
+        .switch { position: relative; display: inline-block; width: 48px; height: 24px; cursor: pointer; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; background-color: #e5e7eb; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--sage); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .loading-bar { width: 0%; height: 2px; background: var(--sage); animation: load 2.8s forwards; }
+        @keyframes load { to { width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <div class="blob-container">
+        <div class="blob" style="top: -100px; left: -100px;"></div>
+        <div class="blob" style="bottom: -100px; right: -100px; animation-delay: -5s;"></div>
+    </div>
+
+    <div id="app-viewport">
+        <div id="landingPage" class="text-center space-y-10">
+            <div class="space-y-6">
+                <div class="inline-block px-5 py-2 rounded-full bg-white/80 border border-[#E9EED9]">
+                    <span class="text-[10px] font-bold tracking-[0.15em] text-[#8A9A5B] uppercase">Digital Stitch Studio</span>
+                </div>
+                <h1 class="text-6xl text-[#5C6345]">Yarn-Saver</h1>
+                <p class="text-gray-500 font-medium px-8">Precision math for the modern Crocheter.</p>
+                <div class="w-40 h-[2px] bg-gray-100 mx-auto overflow-hidden"><div class="loading-bar"></div></div>
+            </div>
+        </div>
+
+        <div id="calculatorApp" class="max-w-md w-full py-10 hidden opacity-0 transition-opacity duration-1000 z-10">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl text-[#5C6345] mb-2">Yarn-Saver</h1>
+                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.4em]">Crafty Trendz Studio</p>
+            </header>
+
+            <div class="glass-card rounded-[3.5rem] p-8 md:p-12 mb-10">
+                <div class="space-y-7">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 mb-2 block">Swatch Weight (g)</label>
+                        <input type="number" id="swatchVal" placeholder="0.0" class="input-field" onkeypress="return isNumberKey(event)">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 mb-2 block">Remaining Yarn (g)</label>
+                        <input type="number" id="yarnVal" placeholder="0.0" class="input-field" onkeypress="return isNumberKey(event)">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 mb-2 block">Project Width (cm)</label>
+                        <input type="number" id="widthVal" placeholder="0.0" class="input-field" onkeypress="return isNumberKey(event)">
+                    </div>
+
+                    <div class="flex items-center justify-between p-5 bg-white/60 rounded-3xl border border-white/60">
+                        <span class="text-sm font-semibold">Safety Buffer</span>
+                        <label class="switch">
+                            <input type="checkbox" id="safetyToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="doCalculate()" class="flex-grow bg-[#8A9A5B] text-white font-bold py-5 rounded-[2rem] shadow-xl active:scale-95 transition-all">
+                            Calculate Rows
+                        </button>
+                        <button onclick="resetApp()" class="w-14 h-14 bg-white border border-[#EEEEEE] text-gray-400 hover:text-sage flex items-center justify-center rounded-full shadow-sm active:scale-90 transition-all shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="resultWrapper" class="hidden pt-4">
+                        <div id="resultCard" class="p-10 rounded-[3rem] bg-[#5C6345] text-white text-center shadow-2xl">
+                            <p class="text-[10px] opacity-60 uppercase tracking-[0.4em] mb-3 font-bold">Estimated Rows</p>
+                            <div id="outputValue" class="text-7xl font-bold mb-1 tracking-tighter">--</div>
+                            <p id="outputLabel" class="text-[10px] opacity-80 uppercase tracking-widest font-bold">Ready to Create</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="text-center space-y-8 pb-10">
+                <div class="flex justify-center gap-4">
+                    <a href="https://www.instagram.com/craftyy_trendz" target="_blank" class="px-5 py-2 bg-white rounded-full border text-[11px] font-bold text-gray-600 shadow-sm hover:shadow-md transition">@craftyy_trendz</a>
+                    <a href="mailto:craftyy.trendz@gmail.com" class="px-5 py-2 bg-white rounded-full border text-[11px] font-bold text-gray-600 shadow-sm hover:shadow-md transition">Email</a>
+                </div>
+                <p class="text-[10px] text-gray-300 font-bold uppercase tracking-[0.3em]">© 2026 Crafty Trendz. All Rights Reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Restrict input to numbers only
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const lp = document.getElementById('landingPage');
+                const app = document.getElementById('calculatorApp');
+                lp.classList.add('is-hidden');
+                setTimeout(() => {
+                    lp.style.display = 'none';
+                    app.classList.remove('hidden');
+                    setTimeout(() => { app.style.opacity = "1"; }, 50);
+                }, 800);
+            }, 3000); 
+        });
+
+        function doCalculate() {
+            const swatch = parseFloat(document.getElementById('swatchVal').value);
+            const yarn = parseFloat(document.getElementById('yarnVal').value);
+            const width = parseFloat(document.getElementById('widthVal').value);
+            const isSafe = document.getElementById('safetyToggle').checked;
+
+            if (!swatch || !yarn || !width) {
+                alert("🧶 Please fill in all fields!");
+                return;
+            }
+
+            const gramsPerRow = (swatch / 100) * width;
+            const rawRows = yarn / gramsPerRow;
+            
+            let final = isSafe ? Math.floor(rawRows) - 2 : Math.floor(rawRows);
+            if (final < 0) final = 0;
+
+            document.getElementById('resultWrapper').classList.remove('hidden');
+            document.getElementById('outputValue').innerText = final;
+            document.getElementById('outputLabel').innerText = isSafe ? "Safe to Stitch" : "Maximum Capacity";
+            
+            setTimeout(() => {
+                document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function resetApp() {
+            document.getElementById('swatchVal').value = '';
+            document.getElementById('yarnVal').value = '';
+            document.getElementById('widthVal').value = '';
+            document.getElementById('resultWrapper').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
