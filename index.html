@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PMEEGL9DEP"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -24,7 +23,6 @@
             --dot-color: rgba(138, 154, 91, 0.12); 
         }
         
-        /* DOTS BACKGROUND ON FULL PAGE */
         html, body { 
             background-color: var(--cream); 
             background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
@@ -50,14 +48,13 @@
             backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 0.7); 
             box-shadow: 0 30px 60px -12px rgba(138, 154, 91, 0.15); 
+            position: relative;
         }
 
         .input-field { width: 100%; padding: 1rem; border-radius: 1rem; border: 1px solid #EEEEEE; background: white; outline: none; transition: 0.3s; }
         .input-field:focus { border-color: var(--sage); box-shadow: 0 0 0 4px rgba(138, 154, 91, 0.05); }
 
-        /* Chrome, Safari, Edge, Opera - Remove arrows */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        /* Firefox - Remove arrows */
         input[type=number] { -moz-appearance: textfield; }
 
         .switch { position: relative; display: inline-block; width: 48px; height: 24px; cursor: pointer; }
@@ -66,6 +63,16 @@
         .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--sage); }
         input:checked + .slider:before { transform: translateX(24px); }
+
+        #helpOverlay { display: none; background: rgba(255, 255, 255, 0.98); position: absolute; inset: 0; z-index: 50; border-radius: 3.5rem; flex-direction: column; justify-content: center; padding: 2.5rem; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @keyframes softPulse {
+            0% { box-shadow: 0 0 0 0 rgba(138, 154, 91, 0.2); }
+            70% { box-shadow: 0 0 0 10px rgba(138, 154, 91, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(138, 154, 91, 0); }
+        }
+        .pulse-btn { animation: softPulse 2s infinite; }
 
         .loading-bar { width: 0%; height: 2px; background: var(--sage); animation: load 2.8s forwards; }
         @keyframes load { to { width: 100%; } }
@@ -97,22 +104,62 @@
             </header>
 
             <div class="glass-card rounded-[3.5rem] p-8 md:p-12 mb-10">
+                
+                <div id="helpOverlay">
+                    <button onclick="toggleHelp()" class="absolute top-8 right-8 text-gray-400 hover:text-sage text-2xl transition-colors">×</button>
+                    <h3 class="text-xs font-bold uppercase tracking-[0.3em] text-[#8A9A5B] mb-8 border-b border-[#E9EED9] pb-2 inline-block">App Guide</h3>
+                    
+                    <ul class="space-y-6 text-[13px] text-gray-600 font-medium leading-relaxed">
+                        <li class="flex items-start gap-4">
+                            <span class="bg-[#E9EED9] text-[#8A9A5B] rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-[10px] shadow-sm">1</span>
+                            <p><strong class="text-dark-sage">The Swatch:</strong> Weigh your 10x10cm sample. This helps the app calculate your unique tension consumption.</p>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span class="bg-[#E9EED9] text-[#8A9A5B] rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-[10px] shadow-sm">2</span>
+                            <p><strong class="text-dark-sage">Dimensions:</strong> Measure your current project's width in cm while it's lying flat.</p>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span class="bg-[#E9EED9] text-[#8A9A5B] rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-[10px] shadow-sm">3</span>
+                            <p><strong class="text-dark-sage">Remaining Yarn:</strong> Enter the weight of your leftover yarn cake in grams.</p>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span class="bg-[#E9EED9] text-[#8A9A5B] rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-[10px] shadow-sm">4</span>
+                            <p><strong class="text-dark-sage">Safety Buffer:</strong> When ON, the app applies a protective margin to your result, ensuring you have enough yarn left for a stress-free bind off.</p>
+                        </li>
+                    </ul>
+                    
+                    <button onclick="toggleHelp()" class="mt-10 w-full bg-transparent border-2 border-sage text-sage py-4 rounded-2xl font-bold text-[11px] uppercase tracking-widest hover:bg-[#8A9A5B] hover:text-white transition-all duration-300">
+                        Close Guide
+                    </button>
+                </div>
+
                 <div class="space-y-7">
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 block">Calculator</label>
+                        
+                        <button onclick="toggleHelp()" class="pulse-btn flex items-center gap-2 px-4 py-2 rounded-full bg-transparent border border-sage text-[10px] font-bold uppercase tracking-tight text-sage hover:bg-[#8A9A5B] hover:text-white transition-all duration-300 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.674a1 1 0 00.992-.83l.997-5.983A5 5 0 106.666 7.047a5 5 0 005.825 8.123 5.053 5.053 0 01-.836 1.83zm.337 3h4v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z" />
+                            </svg>
+                            <span>How to Use</span>
+                        </button>
+                    </div>
+
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 mb-2 block">Swatch Weight (g)</label>
-                        <input type="number" id="swatchVal" placeholder="0.0" class="input-field" onkeypress="return isNumberKey(event)">
+                        <input type="number" id="swatchVal" placeholder="Swatch Weight (g)" class="input-field" onkeypress="return isNumberKey(event)">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 mb-2 block">Remaining Yarn (g)</label>
-                        <input type="number" id="yarnVal" placeholder="0.0" class="input-field" onkeypress="return isNumberKey(event)">
+                        <input type="number" id="yarnVal" placeholder="Remaining Yarn (g)" class="input-field" onkeypress="return isNumberKey(event)">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-3 mb-2 block">Project Width (cm)</label>
-                        <input type="number" id="widthVal" placeholder="0.0" class="input-field" onkeypress="return isNumberKey(event)">
+                        <input type="number" id="widthVal" placeholder="Project Width (cm)" class="input-field" onkeypress="return isNumberKey(event)">
                     </div>
 
                     <div class="flex items-center justify-between p-5 bg-white/60 rounded-3xl border border-white/60">
-                        <span class="text-sm font-semibold">Safety Buffer</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-semibold">Safety Buffer</span>
+                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Stress-free finish</span>
+                        </div>
                         <label class="switch">
                             <input type="checkbox" id="safetyToggle" checked>
                             <span class="slider"></span>
@@ -151,7 +198,6 @@
     </div>
 
     <script>
-        // Restrict input to numbers only
         function isNumberKey(evt) {
             var charCode = (evt.which) ? evt.which : evt.keyCode;
             if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
@@ -172,7 +218,17 @@
             }, 3000); 
         });
 
+        function toggleHelp() {
+            const overlay = document.getElementById('helpOverlay');
+            const isOpening = overlay.style.display === 'none' || overlay.style.display === '';
+            overlay.style.display = isOpening ? 'flex' : 'none';
+            if(isOpening) {
+                gtag('event', 'help_click', { 'event_category': 'engagement' });
+            }
+        }
+
         function doCalculate() {
+            gtag('event', 'calculate_click', { 'event_category': 'engagement', 'event_label': 'Yarn Calculation' });
             const swatch = parseFloat(document.getElementById('swatchVal').value);
             const yarn = parseFloat(document.getElementById('yarnVal').value);
             const width = parseFloat(document.getElementById('widthVal').value);
@@ -185,7 +241,6 @@
 
             const gramsPerRow = (swatch / 100) * width;
             const rawRows = yarn / gramsPerRow;
-            
             let final = isSafe ? Math.floor(rawRows) - 2 : Math.floor(rawRows);
             if (final < 0) final = 0;
 
